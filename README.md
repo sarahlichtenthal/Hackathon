@@ -12,7 +12,7 @@ With this project we will be able to stay more ontop of due dates for each class
 
 Problem
 ===
-Staying on top of your 
+Staying on top of your school work can be overwhelming and confusing especially when 
 
 Calander outline
 ===
