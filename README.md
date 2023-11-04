@@ -12,7 +12,9 @@ With this project we will be able to stay more ontop of due dates for each class
 
 Problem
 ===
-Staying on top of your school work can be overwhelming and confusing especially when 
+Staying on top of your school work can be overwhelming and confusing especially when due dates can be tricky to find. Using Brightspace we have noticed that you can not access due dates
+if you are not on the website. If you want to put in due dates you need to manually update due dates in your own calander. This process can lead to errors in data transfer and if you are not careful you can miss assignments all together.
 
-Calander outline
+Calander
 ===
+This calander is simple to access from your phone on google calander. This system will take the due dates and assignments from Brightspace right onto your person calander. This calander will be able to send notifications when it adds a new assignemnt and when an assingment is coming up. 
