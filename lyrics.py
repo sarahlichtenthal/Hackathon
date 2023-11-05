@@ -1,13 +1,16 @@
-import azapi 
+from azapi import *
 
-API = azapi.AZlyrics('google', accuracy=0.5)
+api = AZlyrics()
 
-API.artist = 'Kanye West'
-API.title = 'Flashing Lights'
+songs = {"Kanye West":"Praise God", "Rihanna":"S&M", "Lady Gaga":"Pokerface", "Justin Timberlake":"Mirrors", "Jack Harlow":"Dua Lipa", "ACDC":"Back in Black", "Yung Gravy":"Mr. Clean", "Eminem":"Rap God"}
 
-API.getLyrics(save=True, ext='lrc')
+for artist in songs:
+    api.artist = artist
+    api.title = songs[artist]
 
-print(API.lyrics)
+    api.getLyrics(save=True, path="songs")
+
+    print(api.lyrics)
 
 # Correct Artist and Title are updated from webpage
-print(API.title, API.artist)
+    print(api.title, api.artist)

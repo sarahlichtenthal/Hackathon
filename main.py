@@ -5,6 +5,8 @@ import base64
 import requests
 from requests import post, get
 import webbrowser
+from azapi import *
+api = AZlyrics()
 
 load_dotenv()
 
@@ -81,8 +83,8 @@ def get_recently_played(token, limit=10):
         return None
      
 AUTH_TOKEN = "AQCXOHIOgMkFVF-ywbFe5yODEgSMIFajbiQEWZnQforrylosiWgofO7Q3W_vmu4Yl1LLJeJ6M14c7LCcOw5xWXXw16PcIcTgmfjQVh2j0SHY18YGTE2qA9v7XFBo0mW9Mrs4gZeXWY1DWUZnERfdjm2M213Psk4b3NOW84LqoCcstSacntMQamZJUtrLcDYOTv6CEDA-temKk2AjkxkGphqy3cPyMMTzuRW2CTalQqQ6kERISfWKG0GqHtMDa9i5cC7suCNc2sh5jI6K638ZluRxbu-BpPJPPl7wuZlBLe__B1ZFEkoLkTdzm6fo2uh3TRz6tgjt4"
-REFRESH_TOKEN = "AQA4vR56UIHVdXD6ju4S5pJUrxwqPp2DNiTZMg87diBT_yprqlbeQLFk0zDNLk_A8iR7c_zO5h90u9rDPEDCcmpmXkMHRrHC2jJCWELWyBO2k8AZx1tviBfnKFo9RUI6HGc"
-ACCESS_TOKEN = "BQDRMLz7MVgCl8DJRPo7XGZVU-8QAlkglxnxiNz6uTboM5GhpR7fIowShwUrifqU6S1HswMZbmcvdSTXLTeEG9rGYcF9cptap6tmJ5J1M-nY0NbPaHlwjIGn45ZUiBGYaeICCgstDBwJg8mGt0x_CBsIkcM5hbVCqnn28H2RoFd6GnoJcvUQKRTGeXXsBSXapIEaN_qIj4gLUjTAoyaxfEgO6SFSWfXwCf8lSjcv7HjAU2C1ITOr8DSdDGHpGU8UWCBpaWUoZAvPmKIQpr-J5kvofy25LeUFCCXSXR2kD4ZJlJFmQvjB0ZYnIxmESWOZ917sKFOieZR-RAQ"
+REFRESH_TOKEN = "AQDDUwyH-lXPNfx49vB1UDTzvwoJaktlzgSdzO4ZD5PSr-8xX0I9v5dqmeM8cjbXlMQk6T5t8WnRRWTGlrvlvequzQ82jQDW5z4i_YbppAxH6u7rG6MhTeC5-ga9_kKm1p4"
+ACCESS_TOKEN = "BQBm2qxBPG0rf62Pxd8STT9DmtFzCqzZK0dl7fYpDQAjyklspMbIml439Q_f33igS3XM8i2qr-7tlDZzhXnd3qQC6ckPsCIMhHPUFoF111XgD6WFfaxYe2s_4VGXQhAZVhrHDD6QeNHirICBqRW_rzs4pqd83-4NrQb9zjJj_bEAPGKGLdxAlJICJn3JeWbZNNDUSm5Cw083dOmROuWUSnAvFzcrV4ZDLP8RonwQVe9Nw4OYKuFRIApKiklOzlnw1AX6ntGd29g0A2Eh-o4vdFWVhk98PyUAhe54eXmRVRHaasB_f9f7LevvtzYYzu0"
 # Replace with your actual credentials and the authorization code from the URL
 
 limit = 10
@@ -102,3 +104,18 @@ def make_recent_play_dictionary(recently_played_tracks):
     return out
 
 print(make_recent_play_dictionary(recently_played_tracks))
+
+songs = make_recent_play_dictionary(recently_played_tracks)
+
+# for artist in songs:
+#     print(artist+",'"+songs[artist]+"'")
+
+
+for artist in songs:
+    api.artist = artist
+    api.title = songs[artist]
+
+    api.getLyrics(save=True)
+
+    print(api.lyrics)
+    print(api.title, api.artist)
