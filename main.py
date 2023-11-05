@@ -4,9 +4,10 @@ import os
 import base64
 import requests
 from requests import post, get
-import webbrowser
 from azapi import *
 api = AZlyrics()
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import matplotlib.pyplot as plt
 
 load_dotenv()
 
@@ -83,9 +84,8 @@ def get_recently_played(token, limit=10):
         return None
      
 AUTH_TOKEN = "AQCXOHIOgMkFVF-ywbFe5yODEgSMIFajbiQEWZnQforrylosiWgofO7Q3W_vmu4Yl1LLJeJ6M14c7LCcOw5xWXXw16PcIcTgmfjQVh2j0SHY18YGTE2qA9v7XFBo0mW9Mrs4gZeXWY1DWUZnERfdjm2M213Psk4b3NOW84LqoCcstSacntMQamZJUtrLcDYOTv6CEDA-temKk2AjkxkGphqy3cPyMMTzuRW2CTalQqQ6kERISfWKG0GqHtMDa9i5cC7suCNc2sh5jI6K638ZluRxbu-BpPJPPl7wuZlBLe__B1ZFEkoLkTdzm6fo2uh3TRz6tgjt4"
-REFRESH_TOKEN = "AQDDUwyH-lXPNfx49vB1UDTzvwoJaktlzgSdzO4ZD5PSr-8xX0I9v5dqmeM8cjbXlMQk6T5t8WnRRWTGlrvlvequzQ82jQDW5z4i_YbppAxH6u7rG6MhTeC5-ga9_kKm1p4"
-ACCESS_TOKEN = "BQBm2qxBPG0rf62Pxd8STT9DmtFzCqzZK0dl7fYpDQAjyklspMbIml439Q_f33igS3XM8i2qr-7tlDZzhXnd3qQC6ckPsCIMhHPUFoF111XgD6WFfaxYe2s_4VGXQhAZVhrHDD6QeNHirICBqRW_rzs4pqd83-4NrQb9zjJj_bEAPGKGLdxAlJICJn3JeWbZNNDUSm5Cw083dOmROuWUSnAvFzcrV4ZDLP8RonwQVe9Nw4OYKuFRIApKiklOzlnw1AX6ntGd29g0A2Eh-o4vdFWVhk98PyUAhe54eXmRVRHaasB_f9f7LevvtzYYzu0"
-# Replace with your actual credentials and the authorization code from the URL
+REFRESH_TOKEN = "AQDlEi-za7Kuz_N_v92Amtef6tzd_iH34IKTjJXvPbl_KaeXNxCUSXP4dLK0JTX92CXPbM1ky7rdZ4HxD_jF2_P8Ydu7tSds306sbTQVhgWxDGs8JEX2BJs3dENJQOWP6j8"
+ACCESS_TOKEN = "BQDWRqNgcBTzuyzDpXXYuJSRSMnwgPOlYILPXxe3TJgDSm18dGpe0qktxZSDoP8_eSGPFDg0zD07-lCV1fjKm4fyMLj-hTALL4dJXXg7hPJRsyyi0_r_IeOS6qE_KX_MbJVuWzgoWZMoCtiWVBQmxGm3O2QiFC1XN_wsFAOPTXxufXMhP96w84UJ77kkUvv5SjXoRQRcWBZXzSfs5wmH338-sJLxKyTE4mS_MX7e5dVHa3HwqdcqfN6U750qNERjXJP790bCGp-4n-wPIXF95xwqe_WKrkWotS5IjDn3rQCaVlTfYfmLxpZEi-tYbMjSnszJNiuzCtaYp-g"
 
 limit = 10
 recently_played_tracks = get_recently_played(ACCESS_TOKEN, limit)
@@ -103,19 +103,76 @@ def make_recent_play_dictionary(recently_played_tracks):
         out[artist_name] = track_name
     return out
 
-print(make_recent_play_dictionary(recently_played_tracks))
-
 songs = make_recent_play_dictionary(recently_played_tracks)
 
 # for artist in songs:
-#     print(artist+",'"+songs[artist]+"'")
+#      api.artist = artist
+#      api.title = songs[artist]
 
+#      api.getLyrics(save=True, path="songs")
 
-for artist in songs:
-    api.artist = artist
-    api.title = songs[artist]
+analyzer = SentimentIntensityAnalyzer()
 
-    api.getLyrics(save=True)
+folder_path = "songs"
+list_song = []
+if os.path.exists(folder_path) and os.path.isdir(folder_path):
+    # Loop through the files in the folder
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".txt"):
+            print(filename)
+            print(folder_path+"/"+filename)
+            with open(folder_path+"/"+filename, 'r') as file:
+                text = file.read()
+            sentiment = analyzer.polarity_scores(text)
+            list_song.append(sentiment)
 
-    print(api.lyrics)
-    print(api.title, api.artist)
+list_items = ""
+
+# Loop through the dictionary and add the values to the list
+for key, value in songs.items():
+    list_items += f"<li>{value}, {key}</li>\n"
+
+# Open the existing HTML file
+with open('test.html', 'r') as file:
+    existing_html = file.read()
+
+# Find the location where you want to insert the generated content
+insert_location = existing_html.find('</h2>')  # Insert after the closing </h1> tag
+
+# Insert the generated content into the HTML
+updated_html = existing_html[:insert_location] + f"<ul>{list_items}</ul>" + existing_html[insert_location:]
+
+# Write the updated HTML content back to the file
+with open('test.html', 'w') as file:
+    file.write(updated_html)
+
+print("Content added to the existing HTML file.")
+
+pos = 0
+neg = 0
+neu = 0
+print(list_song)
+for song in list_song:
+    for key in song:
+        if(key == 'neg'):
+            neg+=float(song[key])
+        elif(key == 'pos'):
+            pos+=float(song[key])
+        else:
+            neu+=float(song[key])
+
+neu /= 10
+categories = ['Negative', 'Neutral', 'Positive']
+
+values = [neg, neu, pos]
+
+# Create the bar graph
+plt.bar(categories, values)
+
+# Set the title
+plt.title('Overall Sentiment')
+
+plt.ylabel('Intensity Value of all 10 Songs')
+
+# Save the chart as a PNG image
+plt.savefig('bar_chart.png', format='png')
